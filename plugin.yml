@@ -1,0 +1,16 @@
+name: LastCommand
+main: net.weasel.LastCommand.LastCommand
+version: 1.22
+commands:
+  last:
+    description: Repeats your last command
+    usage: /last
+  "!":
+    description: Repeats your last command
+    usage: /!
+  ll:
+    description: Repeats your last command
+    usage: /ll
+  "..":
+    description: Repeats your last command
+    usage: /..
