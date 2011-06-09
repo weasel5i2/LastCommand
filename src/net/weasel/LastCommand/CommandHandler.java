@@ -23,8 +23,16 @@ public class CommandHandler implements CommandExecutor
     		
     		if( lastCommand != null )
     		{
-				if( plugin.getServer().dispatchCommand(arg0, lastCommand.substring(1) ) == false )
-					arg0.sendMessage( "There was a problem sending your last command." );
+    			LastCommand.logOutput( ((Player) arg0).getName() + " last cmd: " + lastCommand );
+    			try
+    			{
+					if( plugin.getServer().dispatchCommand(arg0, lastCommand.substring(1) ) == false )
+						arg0.sendMessage( "There was a problem sending your last command." );
+    			}
+    			catch( Exception e )
+    			{
+    				LastCommand.logOutput( "Exception caught: " + e.getCause().getMessage() );
+    			}
     		}
         	else
         		arg0.sendMessage( "I don't know what your last command was." );

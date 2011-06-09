@@ -7,9 +7,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerListener;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,7 +20,7 @@ public class LastCommand extends JavaPlugin
 	public static long lastLogChange = 0;
 	public static CommandExecutor cmdHandler; 
 	
-	private final PlayerEvents playerListener = new PlayerEvents();
+	private final CommandListener playerListener = new CommandListener( this );
 
 	@Override
 	public void onDisable() 
@@ -47,6 +44,7 @@ public class LastCommand extends JavaPlugin
 		getCommand( "." ).setExecutor( cmdHandler );
 		getCommand( "!" ).setExecutor( cmdHandler );
 		getCommand( "l" ).setExecutor( cmdHandler );
+		getCommand( "/" ).setExecutor( cmdHandler );
 
 		logOutput( appName + " v" + pdfFile.getVersion() + " loaded.");
 	}
@@ -135,26 +133,4 @@ public class LastCommand extends JavaPlugin
         }
         return result;
     }
-
-	private class PlayerEvents extends PlayerListener 
-	{
-		@Override
-		public void onPlayerQuit( PlayerQuitEvent e )
-		{
-			if( e.getType() == Type.PLAYER_QUIT )
-			{
-				removePlayer( e.getPlayer() );				
-			}
-		}
-		
-		@Override
-		public void onPlayerCommandPreprocess( PlayerCommandPreprocessEvent e ) 
-		{
-			if( !e.getMessage().equalsIgnoreCase("/ll") && !e.getMessage().equalsIgnoreCase("/last") 
-			&& !e.getMessage().equals("/!") && !e.getMessage().equalsIgnoreCase("/..")  )
-			{
-				setLastCommand( e.getPlayer(), e.getMessage() );
-			}
-		}
-	}
 }
