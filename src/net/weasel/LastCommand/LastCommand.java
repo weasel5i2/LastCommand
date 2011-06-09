@@ -2,8 +2,8 @@ package net.weasel.LastCommand;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -16,12 +16,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class LastCommand extends JavaPlugin 
 {
-	private static List<String> playerList = new ArrayList<String>();
-	private static List<String> commandList = new ArrayList<String>();
+	public static List<String> playerList = new ArrayList<String>();
+	public static List<String> commandList = new ArrayList<String>();
 	public static String appName = null;
 	public static boolean isEnabled = false;
 	public static long lastLogChange = 0;
-	public static boolean debugging = false;
+	public static CommandExecutor cmdHandler; 
 	
 	private final PlayerEvents playerListener = new PlayerEvents();
 
@@ -42,64 +42,17 @@ public class LastCommand extends JavaPlugin
 		PluginDescriptionFile pdfFile = this.getDescription();
 		appName = pdfFile.getName();
 		isEnabled = true;
-		logOutput( appName + " v" + pdfFile.getVersion() + " loaded.");
-	}
-	
-	@Override
-    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) 
-	{
-        String commandName = command.getName().toLowerCase();
-    	
-    	if(commandName.equalsIgnoreCase("last") || commandName.equals("!") 
-    	|| commandName.equals("..") || commandName.equalsIgnoreCase("ll" ) )
-    	{
-            if( sender instanceof Player )
-            {
-	            String lastCommand = getLastCommand((Player)sender);
-	    		
-	    		if( lastCommand != null )
-	    		{
-    				if( debugging ) logOutput( "execute: " + sender.toString() + "," + lastCommand );
-	    				
-    				if( getServer().dispatchCommand(sender, lastCommand.substring(1) ) == true )
-    					if( debugging ) logOutput( "Success." );
-    				else
-    					if( debugging ) logOutput( "Failed to send command." );
-	    		}
-	        	else
-	        		sender.sendMessage( "I don't know what your last command was." );
-	    		
-				return true;
-            }
-            else
-            {
-            	sender.sendMessage( "LastCommand:" );
-            	sender.sendMessage( "=================================" );
-            	
-            	if( playerList.size() > 0 )
-            	{
-            		for( int X = 0; X < playerList.size(); X++ )
-            		{
-            			sender.sendMessage( playerList.get(X) + ": " + commandList.get(X) );
-            		}
-            		
-            		return true;
-            	}
-            	else
-            	{
-            		sender.sendMessage( "No player commands are saved." );
-            		return true;
-            	}
-            }
-		}
 
-    	return false;
+		cmdHandler = new CommandHandler(this);
+		getCommand( "." ).setExecutor( cmdHandler );
+		getCommand( "!" ).setExecutor( cmdHandler );
+		getCommand( "l" ).setExecutor( cmdHandler );
+
+		logOutput( appName + " v" + pdfFile.getVersion() + " loaded.");
 	}
 	
 	public static String getLastCommand( Player player )
 	{
-		if( debugging ) logOutput( "getLastCommand(" + player.getName() + ")" );
-		
 		String retVal = null;
 		String who = null;
 		
@@ -119,8 +72,6 @@ public class LastCommand extends JavaPlugin
 	
 	public static void setLastCommand( Player player, String pCommand )
 	{
-		if( debugging ) logOutput( "setLastCommand(" + player.getName() + "," + pCommand + ")" );
-		
 		String who = null;
 		boolean found = false;
 		
@@ -145,8 +96,6 @@ public class LastCommand extends JavaPlugin
 
 	public static void removePlayer( Player player )
 	{
-		if( debugging ) logOutput( "removePlayer(" + player.getName() + ")" );
-		
 		int found = -1;
 		String who = null;
 		
@@ -201,8 +150,6 @@ public class LastCommand extends JavaPlugin
 		@Override
 		public void onPlayerCommandPreprocess( PlayerCommandPreprocessEvent e ) 
 		{
-			if( debugging ) logOutput( "onPlayerCommandPreprocess(" + e.toString() + "): " + e.getMessage() );
-			
 			if( !e.getMessage().equalsIgnoreCase("/ll") && !e.getMessage().equalsIgnoreCase("/last") 
 			&& !e.getMessage().equals("/!") && !e.getMessage().equalsIgnoreCase("/..")  )
 			{
