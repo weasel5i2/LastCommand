@@ -3,7 +3,6 @@ package net.weasel.LastCommand;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -18,7 +17,7 @@ public class LastCommand extends JavaPlugin
 	public static String appName = null;
 	public static boolean isEnabled = false;
 	public static long lastLogChange = 0;
-	public static CommandExecutor cmdHandler; 
+	public static CommandHandler cmdHandler; 
 	
 	private final CommandListener playerListener = new CommandListener( this );
 
@@ -41,6 +40,7 @@ public class LastCommand extends JavaPlugin
 		isEnabled = true;
 
 		cmdHandler = new CommandHandler(this);
+		
 		getCommand( "." ).setExecutor( cmdHandler );
 		getCommand( "!" ).setExecutor( cmdHandler );
 		getCommand( "l" ).setExecutor( cmdHandler );
