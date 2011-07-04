@@ -1,6 +1,7 @@
 name: LastCommand
 main: net.weasel.LastCommand.LastCommand
-version: 1.4
+author: weasel5i2
+version: 1.41
 commands:
   last:
     description: Repeats your last command
